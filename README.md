@@ -1,6 +1,6 @@
 # Kids House · Portal de familias
 
-Maqueta navegable del portal de familias. El ingreso simulado permite probar tres familias ficticias. Cada cuenta muestra el nombre de un niño o niña, su grupo y una jornada asignada. El visor incluye siete escenas de demostración, una vista individual y controles de reproducción.
+Maqueta navegable del portal de familias. El mismo ingreso simulado permite probar el acceso de la dueña y tres familias ficticias. Cada familia ve el nombre de un niño o niña, su grupo y la jornada asignada. El visor incluye siete escenas de demostración, una vista individual y controles de reproducción.
 
 ## Ver en local
 
@@ -8,9 +8,20 @@ Sirve la carpeta que contiene `index.html` con `python3 -m http.server 8804`. Gi
 
 En la pantalla de ingreso, usa los botones de ejemplo para cargar una cuenta ficticia. El navegador guarda la sesión de prueba en la pestaña y la borra al cerrar sesión.
 
+## Administración de demostración
+
+Con la cuenta de la dueña puedes crear una jornada, registrar a un niño o niña con su grupo y jornada, y vincular a un apoderado. Entra luego con la cuenta de ese apoderado para comprobar el acceso de lunes a viernes, en hora de Santiago. Usa datos ficticios. Las altas de esta maqueta se guardan en el navegador en que se crean.
+
 ## Visuales
 
-La portada usa un recorte de la fotografía proporcionada del mural de Kids House. ImageGen generó las escenas ficticias y los clips MP4 las animan para probar el visor. Las fuentes Bricolage Grotesque y Nunito Sans se distribuyen con sus licencias en `assets/`.
+La portada usa la fotografía proporcionada del mural de Kids House con un ajuste de luz y color de ImageGen. ImageGen también generó las escenas ficticias, que se animaron para probar el visor. Las fuentes Bricolage Grotesque y Nunito Sans se distribuyen con sus licencias en `assets/`.
+
+<details>
+<summary>Ajuste de la luz y el color del mural</summary>
+
+Use case: precise-object-edit. Edit only the photographic color and exposure of the provided direct photograph of the real hand-painted Kids House mural. Keep the framing, perspective, every painted border, the heart and house-shaped O, sun, hills, leaves, natural stucco marks, and especially ALL existing lettering COMPLETELY intact. The real lettering reads GUARDERÍA INTEGRAL / KIDS HOUSE / AFTER SCHOOL. Preserve the existing positions, angles, shapes, and original spelling exactly, with no redraw, no graphic replacement, no re-typesetting, and no additions. This is photographic color grading for the actual reference photograph, not a new illustration. Lift midtones to make the photo feel a little brighter and sunnier, gently warm the wall's white balance to an inviting warm off-white, make the existing forest teal and sage greener and somewhat more vibrant, bring out the existing raspberry coral and honey mustard. Use a tasteful natural boost, keeping the pigment tactile and the real stucco visible. Preserve the whole input composition and original crop, no new objects or people, no smoothing, no watermark.
+
+</details>
 
 <details>
 <summary>Escenas de demostración</summary>

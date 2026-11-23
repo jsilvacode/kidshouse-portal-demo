@@ -1,21 +1,11 @@
+import { bindAdmin, renderAdmin } from "./admin.js";
+import {
+  demoPassword, demoPasswordHash, getFamily, getRecords, isJourneyOpen,
+  journeyHours, ownerUser, recordsKey, reloadRecords,
+} from "./records.js";
 import { resetViewer } from "./viewer.js";
 
-const demoPassword = "kids-demo";
 const storageKey = "kidshouse-demo-session";
-const families = [
-  {
-    id: "morning", user: "familia.manana", child: "Isidora", group: "Exploradores",
-    journey: "Jornada de mañana", hours: "08:30 a 12:30",
-  },
-  {
-    id: "afternoon", user: "familia.tarde", child: "Mateo", group: "Pequeños creadores",
-    journey: "Jornada de tarde", hours: "14:00 a 18:00",
-  },
-  {
-    id: "full", user: "familia.completa", child: "Alma", group: "Semillitas",
-    journey: "Jornada completa", hours: "08:30 a 18:00",
-  },
-];
 
 const entry = document.querySelector("#entry");
 const signIn = document.querySelector("#sign-in");
@@ -31,108 +21,163 @@ const welcomeTitle = document.querySelector("#welcome-title");
 const welcomeChild = document.querySelector("#welcome-child");
 const journeyName = document.querySelector("#journey-name");
 const journeyGroup = document.querySelector("#journey-group");
-const journeyHours = document.querySelector("#journey-hours");
+const journeyTime = document.querySelector("#journey-hours");
+const journeyNotice = document.querySelector("#journey-notice");
+const openCameras = document.querySelector("#open-cameras");
 const familySummary = document.querySelector("#family-summary");
 const familyTitle = document.querySelector("#family-title");
 const familyInitial = document.querySelector("#family-initial");
 const familyDetails = document.querySelector("#family-details");
 const cameras = document.querySelector("#camaras");
+const adminPanel = document.querySelector("#admin-panel");
+const adminTitle = document.querySelector("#admin-title");
+const loginTitle = document.querySelector("#hero-title");
 
 let session = restoreSession();
 
 function restoreSession() {
   try {
     const saved = JSON.parse(sessionStorage.getItem(storageKey));
-    const family = families.find((item) => item.id === saved?.family);
-    return family ? { family, confirmed: saved.journey === family.id } : null;
+    if (saved?.role === "owner" && saved.account === ownerUser) return saved;
+    const family = getFamily(saved?.account ?? saved?.family);
+    if (family) {
+      return {
+        role: "parent",
+        account: family.parent.id,
+        journey: saved.journey === family.journey.id ? saved.journey : null,
+      };
+    }
   } catch {
-    return null;
+    // Start at the demo sign-in screen if there is no usable tab session.
   }
+  return null;
 }
 
 function saveSession() {
   try {
-    if (session) {
-      sessionStorage.setItem(storageKey, JSON.stringify({
-        family: session.family.id,
-        journey: session.confirmed ? session.family.id : null,
-      }));
-    } else {
-      sessionStorage.removeItem(storageKey);
-    }
+    if (session) sessionStorage.setItem(storageKey, JSON.stringify(session));
+    else sessionStorage.removeItem(storageKey);
   } catch {
     // The demo remains usable when tab storage is unavailable.
   }
 }
 
+function currentFamily() {
+  return session?.role === "parent" ? getFamily(session.account) : null;
+}
+
 function showSession(moveFocus = false) {
-  const family = session?.family;
-  const showCameras = Boolean(session?.confirmed);
-  entry.hidden = showCameras;
-  signIn.hidden = Boolean(family);
-  signOutButton.hidden = !family;
+  const family = currentFamily();
+  const owner = session?.role === "owner";
+  const available = Boolean(family && isJourneyOpen(family.journey));
+  const showCameras = available && session.journey === family.journey.id;
+  const interrupted = Boolean(session?.journey && !showCameras);
+  if (interrupted) {
+    session.journey = null;
+    resetViewer();
+    saveSession();
+  }
+
+  entry.hidden = owner || showCameras;
+  signIn.hidden = Boolean(family) || owner;
+  signOutButton.hidden = !family && !owner;
   journeyView.hidden = !family || showCameras;
   familySummary.hidden = !showCameras;
   cameras.hidden = !showCameras;
+  adminPanel.hidden = !owner;
 
   if (family) {
-    welcomeChild.textContent = family.child;
-    journeyName.textContent = family.journey;
-    journeyGroup.textContent = "Grupo " + family.group;
-    journeyHours.textContent = family.hours;
-    journeyInput.value = family.id;
+    const { child, journey } = family;
+    welcomeChild.textContent = child.name;
+    journeyName.textContent = journey.name;
+    journeyGroup.textContent = "Grupo " + child.group;
+    journeyTime.textContent = journeyHours(journey);
+    journeyInput.value = journey.id;
     journeyInput.checked = true;
-    familyTitle.textContent = "Familia de " + family.child;
-    familyInitial.textContent = family.child[0];
+    journeyNotice.textContent = available
+      ? ""
+      : "Fuera de horario. Las cámaras se habilitan de lunes a viernes dentro de esta jornada.";
+    journeyNotice.hidden = available;
+    openCameras.disabled = !available;
+    familyTitle.textContent = "Familia de " + child.name;
+    familyInitial.textContent = child.name[0];
     familyDetails.textContent = [
-      "Grupo " + family.group, family.journey, family.hours,
+      "Grupo " + child.group, journey.name, journeyHours(journey),
     ].join(" · ");
   } else {
     journeyInput.value = "";
     journeyInput.checked = false;
   }
 
-  if (moveFocus) {
-    const heading = showCameras ? familyTitle : family ? welcomeTitle : document.querySelector("#hero-title");
+  if (owner && moveFocus) renderAdmin();
+  if (moveFocus || interrupted) {
+    const heading = owner ? adminTitle : showCameras ? familyTitle : family ? welcomeTitle : loginTitle;
     heading.focus();
   }
 }
 
 for (const button of document.querySelectorAll("[data-demo-family]")) {
   button.addEventListener("click", () => {
-    const family = families.find((item) => item.id === button.dataset.demoFamily);
-    userField.value = family.user;
+    const id = button.dataset.demoFamily;
+    const account = id === "owner" ? ownerUser : getFamily(id)?.parent.user;
+    if (!account) return;
+    userField.value = account;
     passwordField.value = demoPassword;
     signInError.hidden = true;
     signInForm.querySelector('button[type="submit"]').focus();
   });
 }
 
-signInForm.addEventListener("submit", (event) => {
+signInForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const family = families.find((item) => item.user === userField.value.trim().toLowerCase());
-  if (!family || passwordField.value !== demoPassword) {
-    signInError.textContent = "Revisa los datos ingresados o carga una familia de ejemplo.";
+  const user = userField.value.trim().toLowerCase();
+  const password = passwordField.value;
+  const submit = signInForm.querySelector('button[type="submit"]');
+  submit.disabled = true;
+  try {
+    if (user === ownerUser && password === demoPassword) {
+      session = { role: "owner", account: ownerUser };
+    } else {
+      const parent = getRecords().parents.find((item) => item.user === user);
+      const family = getFamily(parent?.id);
+      const valid = family && (parent.passwordHash
+        ? await demoPasswordHash(parent.id, password) === parent.passwordHash
+        : password === demoPassword);
+      if (!valid) {
+        signInError.textContent = "Revisa los datos ingresados o carga una cuenta de ejemplo.";
+        signInError.hidden = false;
+        return;
+      }
+      session = { role: "parent", account: parent.id, journey: null };
+    }
+    signInForm.reset();
+    signInError.hidden = true;
+    saveSession();
+    showSession(true);
+  } catch {
+    signInError.textContent = "No se pudo iniciar la sesión de demostración. Vuelve a intentar.";
     signInError.hidden = false;
-    return;
+  } finally {
+    submit.disabled = false;
   }
-  session = { family, confirmed: false };
-  signInForm.reset();
-  signInError.hidden = true;
-  saveSession();
-  showSession(true);
 });
 
 journeyForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  if (!session || new FormData(journeyForm).get("jornada") !== session.family.id) return;
-  session.confirmed = true;
+  const family = currentFamily();
+  if (!family || !isJourneyOpen(family.journey)
+      || new FormData(journeyForm).get("jornada") !== family.journey.id) {
+    showSession();
+    return;
+  }
+  session.journey = family.journey.id;
   saveSession();
   showSession(true);
 });
 
 document.querySelector("#view-journey").addEventListener("click", () => {
-  session.confirmed = false;
+  if (!currentFamily()) return;
+  session.journey = null;
   resetViewer();
   saveSession();
   showSession(true);
@@ -147,5 +192,24 @@ signOutButton.addEventListener("click", () => {
   showSession(true);
 });
 
+bindAdmin(() => session?.role === "owner");
+window.addEventListener("storage", (event) => {
+  if (event.key !== recordsKey) return;
+  reloadRecords();
+  if (session?.role === "owner") renderAdmin();
+  showSession();
+});
+function refreshAccess() {
+  const family = currentFamily();
+  if (family && openCameras.disabled !== !isJourneyOpen(family.journey)) {
+    showSession();
+  }
+}
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) refreshAccess();
+});
+setInterval(refreshAccess, 1000);
+
 document.querySelector("#sign-in-fields").disabled = false;
+if (session?.role === "owner") renderAdmin();
 showSession();

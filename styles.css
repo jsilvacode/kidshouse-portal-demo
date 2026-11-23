@@ -210,6 +210,7 @@ h1, h2, h3, p { margin-top: 0; }
 }
 .button-primary { color: #fffcf1; background: var(--forest); }
 .button-primary:hover { background: #286458; }
+.button-primary:disabled { background: #d5dbca; color: #4d6156; cursor: not-allowed; }
 
 .entry-form { max-width: 25rem; }
 .sign-in-fields, .journey-fieldset {
@@ -226,7 +227,7 @@ h1, h2, h3, p { margin-top: 0; }
   font-size: .91rem;
   font-weight: 850;
 }
-.field input {
+.field input, .field select {
   width: 100%;
   min-height: 2.82rem;
   padding: .56rem .73rem;
@@ -236,7 +237,16 @@ h1, h2, h3, p { margin-top: 0; }
   color: var(--ink);
   font: 650 1rem/1.25 var(--body);
 }
-.field input:hover { border-color: #8a9f8b; }
+.field select {
+  appearance: none;
+  padding-right: 1.9rem;
+  background-image: linear-gradient(45deg, transparent 50%, #446359 50%),
+    linear-gradient(135deg, #446359 50%, transparent 50%);
+  background-position: calc(100% - 15px) 53%, calc(100% - 10px) 53%;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+.field input:hover, .field select:hover { border-color: #8a9f8b; }
 .entry-form .button { justify-content: center; width: 100%; }
 .sign-in-fields .button { margin-top: .12rem; }
 .form-error { margin: 0; color: #8a3144; font-size: .9rem; font-weight: 750; }
@@ -281,6 +291,16 @@ h1, h2, h3, p { margin-top: 0; }
 .journey-name { margin-bottom: .28rem; font: 770 1.27rem/1.15 var(--display); letter-spacing: -.02em; }
 .journey-group, .journey-hours { font-size: .93rem; color: var(--muted); }
 .journey-group { font-weight: 800; }
+.journey-notice {
+  margin: 0 0 .95rem;
+  padding: .65rem .78rem;
+  border: 1px solid #d8bb91;
+  border-radius: .65rem;
+  background: #fff6dc;
+  color: #68482b;
+  font-weight: 750;
+  font-size: .92rem;
+}
 
 .family-summary {
   display: grid;
@@ -311,6 +331,51 @@ h1, h2, h3, p { margin-top: 0; }
 .family-summary p { margin: .45rem 0 0; color: var(--muted); font-weight: 650; }
 .family-summary .nav-link { background: var(--paper); white-space: nowrap; }
 .family-summary .nav-link:hover { background: #f3f5ea; }
+
+.admin { margin-bottom: clamp(2rem, 4.4vw, 4rem); }
+.admin-heading {
+  padding: clamp(1.3rem, 4vw, 2.8rem);
+  border-radius: 1.45rem;
+  background: #f8edce;
+  color: var(--forest);
+}
+.admin-heading h1 {
+  margin-bottom: .55rem;
+  font: 780 clamp(2rem, 4.4vw, 3.8rem)/1.04 var(--display);
+  letter-spacing: -.055em;
+}
+.admin-heading > p:last-child { margin: 0; color: var(--muted); }
+.admin-controls { margin: 1.1rem 0; }
+.admin-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.32fr); gap: 1rem; align-items: start; }
+.admin-card {
+  min-width: 0;
+  padding: clamp(1.05rem, 3vw, 1.5rem);
+  border: 1px solid var(--line);
+  border-radius: 1.16rem;
+  background: var(--paper);
+}
+.admin-card h2 {
+  margin: 0;
+  color: var(--forest);
+  font: 770 1.32rem/1.17 var(--display);
+  letter-spacing: -.02em;
+}
+.admin-form { display: grid; gap: .88rem; }
+.admin-form .button { justify-content: center; }
+.time-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
+.admin-hint, .admin-feedback { margin: 0; color: var(--muted); font-size: .91rem; font-weight: 700; }
+.admin-feedback { color: #305f49; }
+.admin-feedback[data-error="true"] { color: #8a3144; }
+.admin-records { margin: .9rem 0 0; padding: 0; list-style: none; }
+.admin-records li {
+  display: grid;
+  gap: .22rem;
+  padding: .72rem 0;
+  border-top: 1px solid var(--line);
+  overflow-wrap: anywhere;
+}
+.admin-records strong { color: var(--forest); line-height: 1.18; }
+.admin-records span { color: var(--muted); font-size: .91rem; }
 
 .icon { flex: none; display: inline-block; width: 1rem; height: 1rem; position: relative; }
 .icon-grid {
@@ -523,6 +588,7 @@ h1, h2, h3, p { margin-top: 0; }
   .camera-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .66rem; }
   .single-view { grid-template-columns: 1fr; }
   .camera-picker ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-layout { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 31rem) {

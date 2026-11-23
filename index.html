@@ -56,6 +56,7 @@
             <button type="button" data-demo-family="morning">Mañana</button>
             <button type="button" data-demo-family="afternoon">Tarde</button>
             <button type="button" data-demo-family="full">Jornada completa</button>
+            <button type="button" data-demo-family="owner">Dueña</button>
           </div>
         </div>
       </section>
@@ -73,10 +74,12 @@
                 <span class="journey-name" id="journey-name"></span>
                 <span class="journey-group" id="journey-group"></span>
                 <span class="journey-hours" id="journey-hours"></span>
+                <span class="journey-hours">Lunes a viernes · Hora de Santiago</span>
               </span>
             </label>
           </fieldset>
-          <button type="submit" class="button button-primary"><span class="icon icon-camera" aria-hidden="true"></span> Ver mis cámaras</button>
+          <p class="journey-notice" id="journey-notice" role="status" hidden></p>
+          <button type="submit" class="button button-primary" id="open-cameras"><span class="icon icon-camera" aria-hidden="true"></span> Ver mis cámaras</button>
         </form>
       </section>
 
@@ -85,6 +88,68 @@
           alt="Mural de Kids House con el nombre del centro, un sol y formas de colores" fetchpriority="high">
       </div>
     </div>
+
+    <section class="admin" id="admin-panel" aria-labelledby="admin-title" hidden>
+      <header class="admin-heading">
+        <p class="eyebrow"><span aria-hidden="true" class="little-sun"></span> Administración</p>
+        <h1 id="admin-title" tabindex="-1">Familias y jornadas</h1>
+        <p>Usa datos ficticios para probar cómo se asigna el acceso a una familia.</p>
+      </header>
+      <div class="view-controls admin-controls" role="group" aria-label="Administración de familias">
+        <button type="button" data-admin-section="journeys" aria-controls="manage-journeys" aria-pressed="true">Jornadas</button>
+        <button type="button" data-admin-section="children" aria-controls="manage-children" aria-pressed="false">Niños y grupos</button>
+        <button type="button" data-admin-section="parents" aria-controls="manage-parents" aria-pressed="false">Padres</button>
+      </div>
+
+      <div class="admin-layout" id="manage-journeys" data-admin-pane="journeys">
+        <form class="admin-card admin-form" id="new-journey" method="post" autocomplete="off">
+          <h2>Nueva jornada</h2>
+          <label class="field">Nombre <input type="text" name="nombre" required maxlength="70"></label>
+          <div class="time-fields">
+            <label class="field">Desde <input type="time" name="inicio" required></label>
+            <label class="field">Hasta <input type="time" name="fin" required></label>
+          </div>
+          <p class="admin-hint">Lunes a viernes · Hora de Santiago</p>
+          <button class="button button-primary" type="submit">Crear jornada</button>
+          <p class="admin-feedback" role="status" hidden></p>
+        </form>
+        <section class="admin-card" aria-labelledby="registered-journeys">
+          <h2 id="registered-journeys">Jornadas registradas</h2>
+          <ul id="journey-records" class="admin-records"></ul>
+        </section>
+      </div>
+
+      <div class="admin-layout" id="manage-children" data-admin-pane="children" hidden>
+        <form class="admin-card admin-form" id="new-child" method="post" autocomplete="off">
+          <h2>Registrar niño o niña</h2>
+          <label class="field">Nombre <input type="text" name="nombre" required maxlength="70"></label>
+          <label class="field">Grupo <input type="text" name="grupo" required maxlength="70"></label>
+          <label class="field">Jornada <select name="jornada" id="child-journey" required></select></label>
+          <button class="button button-primary" type="submit">Registrar niño o niña</button>
+          <p class="admin-feedback" role="status" hidden></p>
+        </form>
+        <section class="admin-card" aria-labelledby="registered-children">
+          <h2 id="registered-children">Niños y grupos registrados</h2>
+          <ul id="child-records" class="admin-records"></ul>
+        </section>
+      </div>
+
+      <div class="admin-layout" id="manage-parents" data-admin-pane="parents" hidden>
+        <form class="admin-card admin-form" id="new-parent" method="post" autocomplete="off">
+          <h2>Registrar padre o apoderado</h2>
+          <label class="field">Nombre <input type="text" name="nombre" required maxlength="70"></label>
+          <label class="field">Usuario <input type="text" name="usuario" required maxlength="64" autocapitalize="none" spellcheck="false"></label>
+          <label class="field">Clave de prueba <input type="password" name="clave" required maxlength="64"></label>
+          <label class="field">Niño o niña <select name="nino" id="parent-child" required></select></label>
+          <button class="button button-primary" type="submit">Dar de alta</button>
+          <p class="admin-feedback" role="status" hidden></p>
+        </form>
+        <section class="admin-card" aria-labelledby="registered-parents">
+          <h2 id="registered-parents">Padres y apoderados registrados</h2>
+          <ul id="parent-records" class="admin-records"></ul>
+        </section>
+      </div>
+    </section>
 
     <section class="family-summary" id="family-summary" aria-labelledby="family-title" hidden>
       <span class="family-initial" id="family-initial" aria-hidden="true"></span>
@@ -136,7 +201,7 @@
         <span class="footer-brand">Kids House</span>
         <span class="footer-description">Guardería integral y after school</span>
       </div>
-      <a href="#inicio">Volver al inicio</a>
+      <a href="#inicio">Volver arriba</a>
     </div>
   </footer>
 </body>
