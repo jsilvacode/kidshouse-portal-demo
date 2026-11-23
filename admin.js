@@ -3,9 +3,11 @@ import { addRecord, demoPasswordHash, getRecords, journeyHours, ownerUser } from
 const sectionButtons = document.querySelectorAll("[data-admin-section]");
 const panels = document.querySelectorAll("[data-admin-pane]");
 const journeyList = document.querySelector("#journey-records");
+const courseList = document.querySelector("#course-records");
 const childList = document.querySelector("#child-records");
 const parentList = document.querySelector("#parent-records");
-const childJourney = document.querySelector("#child-journey");
+const courseJourney = document.querySelector("#course-journey");
+const childCourse = document.querySelector("#child-course");
 const parentChild = document.querySelector("#parent-child");
 
 function listItem(name, description) {
@@ -27,22 +29,33 @@ function fillChoices(select, placeholder, options) {
 }
 
 export function renderAdmin() {
-  const { journeys, children, parents } = getRecords();
+  const { journeys, courses, children, parents } = getRecords();
   const journeyById = new Map(journeys.map((journey) => [journey.id, journey]));
+  const courseById = new Map(courses.map((course) => [course.id, course]));
   const childById = new Map(children.map((child) => [child.id, child]));
   journeyList.replaceChildren(...journeys.map((journey) =>
     listItem(journey.name, journeyHours(journey) + " · Lunes a viernes")));
-  childList.replaceChildren(...children.map((child) =>
-    listItem(child.name, child.group + " · " + (journeyById.get(child.journeyId)?.name ?? "Jornada pendiente"))));
+  courseList.replaceChildren(...courses.map((course) => {
+    const journey = journeyById.get(course.journeyId);
+    return listItem(course.name, journey ? journey.name + " · " + journeyHours(journey) : "Jornada pendiente");
+  }));
+  childList.replaceChildren(...children.map((child) => {
+    const course = courseById.get(child.courseId);
+    const journey = journeyById.get(course?.journeyId);
+    return listItem(child.name, [course?.name, journey?.name].filter(Boolean).join(" · "));
+  }));
   parentList.replaceChildren(...parents.map((parent) => {
     const child = childById.get(parent.childId);
-    const journey = journeyById.get(child?.journeyId);
-    return listItem(parent.name, [parent.user, child?.name, journey?.name].filter(Boolean).join(" · "));
+    const course = courseById.get(child?.courseId);
+    const journey = journeyById.get(course?.journeyId);
+    return listItem(parent.name, [parent.user, child?.name, course?.name, journey?.name].filter(Boolean).join(" · "));
   }));
-  fillChoices(childJourney, "Elige una jornada", journeys.map((journey) =>
+  fillChoices(courseJourney, "Elige una jornada", journeys.map((journey) =>
     new Option(journey.name + " · " + journeyHours(journey), journey.id)));
+  fillChoices(childCourse, "Elige un curso", courses.map((course) =>
+    new Option([course.name, journeyById.get(course.journeyId)?.name].filter(Boolean).join(" · "), course.id)));
   fillChoices(parentChild, "Elige un niño o niña", children.map((child) =>
-    new Option(child.name + " · " + child.group, child.id)));
+    new Option([child.name, courseById.get(child.courseId)?.name].filter(Boolean).join(" · "), child.id)));
 }
 
 function feedback(form, message, error = false) {
@@ -84,18 +97,34 @@ export function bindAdmin(isOwner) {
     created(form, "journeys", { id: crypto.randomUUID(), name, start, end }, "Jornada creada.");
   });
 
+  document.querySelector("#new-course").addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!isOwner()) return;
+    const form = event.currentTarget;
+    const values = new FormData(form);
+    const name = values.get("nombre").trim();
+    const journeyId = values.get("jornada");
+    const { journeys, courses } = getRecords();
+    if (!name || !journeys.some((journey) => journey.id === journeyId)) {
+      return feedback(form, "Ingresa el nombre del curso y elige su jornada.", true);
+    }
+    if (courses.some((course) => course.journeyId === journeyId && course.name.toLowerCase() === name.toLowerCase())) {
+      return feedback(form, "Ya existe un curso con ese nombre en esta jornada.", true);
+    }
+    created(form, "courses", { id: crypto.randomUUID(), name, journeyId }, "Curso creado.");
+  });
+
   document.querySelector("#new-child").addEventListener("submit", (event) => {
     event.preventDefault();
     if (!isOwner()) return;
     const form = event.currentTarget;
     const values = new FormData(form);
     const name = values.get("nombre").trim();
-    const group = values.get("grupo").trim();
-    const journeyId = values.get("jornada");
-    if (!name || !group || !getRecords().journeys.some((journey) => journey.id === journeyId)) {
-      return feedback(form, "Completa el nombre, el grupo y la jornada.", true);
+    const courseId = values.get("curso");
+    if (!name || !getRecords().courses.some((course) => course.id === courseId)) {
+      return feedback(form, "Completa el nombre y elige su curso.", true);
     }
-    created(form, "children", { id: crypto.randomUUID(), name, group, journeyId }, "Niño o niña registrado.");
+    created(form, "children", { id: crypto.randomUUID(), name, courseId }, "Niño o niña registrado.");
   });
 
   document.querySelector("#new-parent").addEventListener("submit", async (event) => {

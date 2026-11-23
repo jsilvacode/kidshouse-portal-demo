@@ -20,7 +20,7 @@ const journeyInput = document.querySelector("#assigned-journey");
 const welcomeTitle = document.querySelector("#welcome-title");
 const welcomeChild = document.querySelector("#welcome-child");
 const journeyName = document.querySelector("#journey-name");
-const journeyGroup = document.querySelector("#journey-group");
+const journeyCourse = document.querySelector("#journey-course");
 const journeyTime = document.querySelector("#journey-hours");
 const journeyNotice = document.querySelector("#journey-notice");
 const openCameras = document.querySelector("#open-cameras");
@@ -87,10 +87,10 @@ function showSession(moveFocus = false) {
   adminPanel.hidden = !owner;
 
   if (family) {
-    const { child, journey } = family;
+    const { child, course, journey } = family;
     welcomeChild.textContent = child.name;
     journeyName.textContent = journey.name;
-    journeyGroup.textContent = "Grupo " + child.group;
+    journeyCourse.textContent = "Curso " + course.name;
     journeyTime.textContent = journeyHours(journey);
     journeyInput.value = journey.id;
     journeyInput.checked = true;
@@ -102,7 +102,7 @@ function showSession(moveFocus = false) {
     familyTitle.textContent = "Familia de " + child.name;
     familyInitial.textContent = child.name[0];
     familyDetails.textContent = [
-      "Grupo " + child.group, journey.name, journeyHours(journey),
+      "Curso " + course.name, journey.name, journeyHours(journey),
     ].join(" · ");
   } else {
     journeyInput.value = "";

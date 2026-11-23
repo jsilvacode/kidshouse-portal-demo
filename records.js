@@ -7,10 +7,15 @@ const exampleJourneys = [
   { id: "afternoon", name: "Jornada de tarde", start: "14:00", end: "18:00" },
   { id: "full", name: "Jornada completa", start: "08:30", end: "19:30" },
 ];
+const exampleCourses = [
+  { id: "exploradores", name: "Exploradores", journeyId: "morning" },
+  { id: "creadores", name: "Pequeños creadores", journeyId: "afternoon" },
+  { id: "semillitas", name: "Semillitas", journeyId: "full" },
+];
 const exampleChildren = [
-  { id: "isidora", name: "Isidora", group: "Exploradores", journeyId: "morning" },
-  { id: "mateo", name: "Mateo", group: "Pequeños creadores", journeyId: "afternoon" },
-  { id: "alma", name: "Alma", group: "Semillitas", journeyId: "full" },
+  { id: "isidora", name: "Isidora", courseId: "exploradores" },
+  { id: "mateo", name: "Mateo", courseId: "creadores" },
+  { id: "alma", name: "Alma", courseId: "semillitas" },
 ];
 const exampleParents = [
   { id: "morning", name: "Camila", user: "familia.manana", childId: "isidora" },
@@ -24,17 +29,31 @@ const santiagoClock = new Intl.DateTimeFormat("en-GB", {
 
 let records = readRecords();
 
+function migrateCourses(saved) {
+  // Earlier drafts stored the course name and journey on each child.
+  const courses = new Map();
+  const children = saved.children.map(({ id, name, group, journeyId }) => {
+    const key = JSON.stringify([group.toLowerCase(), journeyId]);
+    if (!courses.has(key)) {
+      courses.set(key, { id: `curso-anterior-${courses.size + 1}`, name: group, journeyId });
+    }
+    return { id, name, courseId: courses.get(key).id };
+  });
+  return { ...saved, courses: [...courses.values()], children };
+}
+
 function readRecords() {
   try {
     const saved = JSON.parse(localStorage.getItem(recordsKey));
     if (Array.isArray(saved?.journeys) && Array.isArray(saved.children) && Array.isArray(saved.parents)) {
-      return saved;
+      return Array.isArray(saved.courses) ? saved : migrateCourses(saved);
     }
   } catch {
     // Start with the example data if browser storage is unavailable.
   }
   return {
     journeys: [...exampleJourneys],
+    courses: [...exampleCourses],
     children: [...exampleChildren],
     parents: [...exampleParents],
   };
@@ -62,8 +81,9 @@ export function addRecord(kind, record) {
 export function getFamily(parentId) {
   const parent = records.parents.find((item) => item.id === parentId);
   const child = records.children.find((item) => item.id === parent?.childId);
-  const journey = records.journeys.find((item) => item.id === child?.journeyId);
-  return parent && child && journey ? { parent, child, journey } : null;
+  const course = records.courses.find((item) => item.id === child?.courseId);
+  const journey = records.journeys.find((item) => item.id === course?.journeyId);
+  return parent && child && course && journey ? { parent, child, course, journey } : null;
 }
 
 export function journeyHours(journey) {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f9f7ee">
+  <meta name="theme-color" content="#f2e5d2">
   <meta name="robots" content="noindex">
   <meta name="description" content="Maqueta del portal de familias de Kids House. Prueba el ingreso, la jornada asignada y el mosaico de cámaras de demostración.">
   <title>Kids House · Portal de familias</title>
@@ -30,75 +30,78 @@
     </div>
   </header>
 
-  <main class="shell" id="contenido" tabindex="-1">
+  <main id="contenido" tabindex="-1">
     <div class="hero" id="entry">
-      <section class="hero-copy" id="sign-in" aria-labelledby="hero-title">
-        <p class="eyebrow"><span aria-hidden="true" class="little-sun"></span> Portal de familias</p>
-        <h1 id="hero-title" tabindex="-1">Una ventana a<br><span>Kids House</span></h1>
-        <p class="hero-description">Prueba el ingreso al portal con una familia de ejemplo.</p>
-        <form class="entry-form" id="sign-in-form" method="post" autocomplete="off">
-          <fieldset class="sign-in-fields" id="sign-in-fields" disabled>
-            <label class="field" for="demo-user">
-              Usuario
-              <input id="demo-user" name="usuario" type="text" spellcheck="false" autocapitalize="none" required>
-            </label>
-            <label class="field" for="demo-password">
-              Clave
-              <input id="demo-password" name="clave" type="password" required>
-            </label>
-            <p class="form-error" id="sign-in-error" role="alert" hidden></p>
-            <button type="submit" class="button button-primary">Ingresar</button>
-          </fieldset>
-        </form>
-        <div class="demo-access">
-          <p id="demo-access-title">Cargar datos de ejemplo</p>
-          <div class="demo-options" role="group" aria-labelledby="demo-access-title">
-            <button type="button" data-demo-family="morning">Mañana</button>
-            <button type="button" data-demo-family="afternoon">Tarde</button>
-            <button type="button" data-demo-family="full">Jornada completa</button>
-            <button type="button" data-demo-family="owner">Dueña</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="hero-copy" id="choose-journey" aria-labelledby="welcome-title" hidden>
-        <p class="eyebrow"><span aria-hidden="true" class="little-sun"></span> Portal de familias</p>
-        <h1 class="welcome-title" id="welcome-title" tabindex="-1">Hola, familia de <span id="welcome-child"></span></h1>
-        <p class="hero-description">Confirma la jornada asignada para abrir el visor de cámaras.</p>
-        <form class="entry-form" id="journey-form" method="post">
-          <fieldset class="journey-fieldset">
-            <legend>Tu jornada disponible</legend>
-            <label class="journey-option">
-              <input id="assigned-journey" type="radio" name="jornada" required>
-              <span>
-                <span class="journey-name" id="journey-name"></span>
-                <span class="journey-group" id="journey-group"></span>
-                <span class="journey-hours" id="journey-hours"></span>
-                <span class="journey-hours">Lunes a viernes · Hora de Santiago</span>
-              </span>
-            </label>
-          </fieldset>
-          <p class="journey-notice" id="journey-notice" role="status" hidden></p>
-          <button type="submit" class="button button-primary" id="open-cameras"><span class="icon icon-camera" aria-hidden="true"></span> Ver mis cámaras</button>
-        </form>
-      </section>
-
-      <div class="hero-illustration">
-        <img src="assets/mural.jpg" width="1256" height="990"
+      <picture class="hero-wall">
+        <source media="(max-width: 54rem)" srcset="assets/mural.jpg" width="1256" height="990">
+        <img src="assets/mural-portada.jpg" width="1672" height="941"
           alt="Mural de Kids House con el nombre del centro, un sol y formas de colores" fetchpriority="high">
+      </picture>
+      <div class="shell hero-inner">
+        <section class="hero-copy" id="sign-in" aria-labelledby="hero-title">
+          <h1 id="hero-title" tabindex="-1">Portal de<br> <span>familias</span></h1>
+          <p class="hero-description">Ingresa para consultar tu jornada y abrir tus cámaras.</p>
+          <form class="entry-form" id="sign-in-form" method="post" autocomplete="off">
+            <fieldset class="sign-in-fields" id="sign-in-fields" disabled>
+              <label class="field" for="demo-user">
+                Usuario
+                <input id="demo-user" name="usuario" type="text" spellcheck="false" autocapitalize="none" required>
+              </label>
+              <label class="field" for="demo-password">
+                Clave
+                <input id="demo-password" name="clave" type="password" required>
+              </label>
+              <p class="form-error" id="sign-in-error" role="alert" hidden></p>
+              <button type="submit" class="button button-primary">Ingresar</button>
+            </fieldset>
+          </form>
+          <div class="demo-access">
+            <p id="demo-access-title">Probar con una cuenta de ejemplo</p>
+            <div class="demo-options" role="group" aria-labelledby="demo-access-title">
+              <button type="button" data-demo-family="morning">Mañana</button>
+              <button type="button" data-demo-family="afternoon">Tarde</button>
+              <button type="button" data-demo-family="full">Jornada completa</button>
+              <button type="button" data-demo-family="owner">Dueña</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="hero-copy" id="choose-journey" aria-labelledby="welcome-title" hidden>
+          <p class="eyebrow"><span aria-hidden="true" class="little-sun"></span> Portal de familias</p>
+          <h1 class="welcome-title" id="welcome-title" tabindex="-1">Hola, familia de <span id="welcome-child"></span></h1>
+          <p class="hero-description">Confirma la jornada asignada para abrir el visor de cámaras.</p>
+          <form class="entry-form" id="journey-form" method="post">
+            <fieldset class="journey-fieldset">
+              <legend>Tu jornada disponible</legend>
+              <label class="journey-option">
+                <input id="assigned-journey" type="radio" name="jornada" required>
+                <span>
+                  <span class="journey-name" id="journey-name"></span>
+                  <span class="journey-course" id="journey-course"></span>
+                  <span class="journey-hours" id="journey-hours"></span>
+                  <span class="journey-hours">Lunes a viernes · Hora de Santiago</span>
+                </span>
+              </label>
+            </fieldset>
+            <p class="journey-notice" id="journey-notice" role="status" hidden></p>
+            <button type="submit" class="button button-primary" id="open-cameras"><span class="icon icon-camera" aria-hidden="true"></span> Ver mis cámaras</button>
+          </form>
+        </section>
       </div>
     </div>
 
-    <section class="admin" id="admin-panel" aria-labelledby="admin-title" hidden>
+    <section class="shell admin" id="admin-panel" aria-labelledby="admin-title" hidden>
       <header class="admin-heading">
         <p class="eyebrow"><span aria-hidden="true" class="little-sun"></span> Administración</p>
-        <h1 id="admin-title" tabindex="-1">Familias y jornadas</h1>
-        <p>Usa datos ficticios para probar cómo se asigna el acceso a una familia.</p>
+        <h1 id="admin-title" tabindex="-1">Familias y cursos</h1>
+        <p>Asigna una jornada a cada curso. Las familias reciben el horario del curso de su hijo o hija.</p>
+        <p class="admin-example">Usa datos ficticios en esta maqueta.</p>
       </header>
       <div class="view-controls admin-controls" role="group" aria-label="Administración de familias">
         <button type="button" data-admin-section="journeys" aria-controls="manage-journeys" aria-pressed="true">Jornadas</button>
-        <button type="button" data-admin-section="children" aria-controls="manage-children" aria-pressed="false">Niños y grupos</button>
-        <button type="button" data-admin-section="parents" aria-controls="manage-parents" aria-pressed="false">Padres</button>
+        <button type="button" data-admin-section="courses" aria-controls="manage-courses" aria-pressed="false">Cursos</button>
+        <button type="button" data-admin-section="children" aria-controls="manage-children" aria-pressed="false">Niños</button>
+        <button type="button" data-admin-section="parents" aria-controls="manage-parents" aria-pressed="false">Apoderados</button>
       </div>
 
       <div class="admin-layout" id="manage-journeys" data-admin-pane="journeys">
@@ -119,17 +122,31 @@
         </section>
       </div>
 
+      <div class="admin-layout" id="manage-courses" data-admin-pane="courses" hidden>
+        <form class="admin-card admin-form" id="new-course" method="post" autocomplete="off">
+          <h2>Nuevo curso</h2>
+          <label class="field">Nombre del curso <input type="text" name="nombre" required maxlength="70"></label>
+          <label class="field">Jornada <select name="jornada" id="course-journey" required></select></label>
+          <button class="button button-primary" type="submit">Crear curso</button>
+          <p class="admin-feedback" role="status" hidden></p>
+        </form>
+        <section class="admin-card" aria-labelledby="registered-courses">
+          <h2 id="registered-courses">Cursos registrados</h2>
+          <ul id="course-records" class="admin-records"></ul>
+        </section>
+      </div>
+
       <div class="admin-layout" id="manage-children" data-admin-pane="children" hidden>
         <form class="admin-card admin-form" id="new-child" method="post" autocomplete="off">
           <h2>Registrar niño o niña</h2>
           <label class="field">Nombre <input type="text" name="nombre" required maxlength="70"></label>
-          <label class="field">Grupo <input type="text" name="grupo" required maxlength="70"></label>
-          <label class="field">Jornada <select name="jornada" id="child-journey" required></select></label>
+          <label class="field">Curso <select name="curso" id="child-course" aria-describedby="course-hint" required></select></label>
+          <p class="admin-hint" id="course-hint">La jornada se toma del curso.</p>
           <button class="button button-primary" type="submit">Registrar niño o niña</button>
           <p class="admin-feedback" role="status" hidden></p>
         </form>
         <section class="admin-card" aria-labelledby="registered-children">
-          <h2 id="registered-children">Niños y grupos registrados</h2>
+          <h2 id="registered-children">Niños y niñas registrados</h2>
           <ul id="child-records" class="admin-records"></ul>
         </section>
       </div>
@@ -151,7 +168,7 @@
       </div>
     </section>
 
-    <section class="family-summary" id="family-summary" aria-labelledby="family-title" hidden>
+    <section class="shell family-summary" id="family-summary" aria-labelledby="family-title" hidden>
       <span class="family-initial" id="family-initial" aria-hidden="true"></span>
       <div class="family-summary-text">
         <h1 id="family-title" tabindex="-1"></h1>
@@ -160,7 +177,7 @@
       <button type="button" class="nav-link" id="view-journey">Mi jornada</button>
     </section>
 
-    <section class="viewer" id="camaras" aria-labelledby="viewer-title" hidden>
+    <section class="shell viewer" id="camaras" aria-labelledby="viewer-title" hidden>
       <div class="viewer-heading">
         <div>
           <h2 id="viewer-title">Cámaras</h2>
@@ -192,7 +209,7 @@
         </div>
       </div>
     </section>
-    <noscript><p>Activa JavaScript para probar el portal y explorar las cámaras de la maqueta.</p></noscript>
+    <noscript><p class="shell">Activa JavaScript para probar el portal y explorar las cámaras de la maqueta.</p></noscript>
   </main>
 
   <footer class="footer">

@@ -1,6 +1,6 @@
 # Kids House · Portal de familias
 
-Maqueta navegable del portal de familias. El mismo ingreso simulado permite probar el acceso de la dueña y tres familias ficticias. Cada familia ve el nombre de un niño o niña, su grupo y la jornada asignada. El visor incluye siete escenas de demostración, una vista individual y controles de reproducción.
+Maqueta navegable del portal de familias. El mismo ingreso simulado permite probar el acceso de la dueña y tres familias ficticias. Cada familia ve el nombre de un niño o niña, su curso y la jornada de ese curso. El visor incluye siete escenas de demostración, una vista individual y controles de reproducción.
 
 ## Ver en local
 
@@ -10,11 +10,18 @@ En la pantalla de ingreso, usa los botones de ejemplo para cargar una cuenta fic
 
 ## Administración de demostración
 
-Con la cuenta de la dueña puedes crear una jornada, registrar a un niño o niña con su grupo y jornada, y vincular a un apoderado. Entra luego con la cuenta de ese apoderado para comprobar el acceso de lunes a viernes, en hora de Santiago. Usa datos ficticios. Las altas de esta maqueta se guardan en el navegador en que se crean.
+Con la cuenta de la dueña, crea una jornada, asígnala a un curso, registra a un niño o niña en ese curso y vincula a un apoderado. Entra luego con la cuenta de ese apoderado para comprobar que recibe la jornada del curso y el acceso de lunes a viernes, en hora de Santiago. Usa datos ficticios. Las altas de esta maqueta se guardan en el navegador en que se crean.
 
 ## Visuales
 
-La portada usa la fotografía proporcionada del mural de Kids House con un ajuste de luz y color de ImageGen. ImageGen también generó las escenas ficticias, que se animaron para probar el visor. Las fuentes Bricolage Grotesque y Nunito Sans se distribuyen con sus licencias en `assets/`.
+La portada muestra una extensión panorámica del mural creada con ImageGen en `assets/mural-portada.jpg`. En pantallas estrechas usa la fotografía proporcionada con un ajuste de luz y color en `assets/mural.jpg`. ImageGen también generó las escenas ficticias, que se animaron para probar el visor. Las fuentes Bricolage Grotesque y Nunito Sans se distribuyen con sus licencias en `assets/`.
+
+<details>
+<summary>Extensión panorámica del mural</summary>
+
+Use case: compositing. Make a single wide landscape background artwork, ideally 16:9, for the full-bleed homepage of the real Chilean daycare Kids House. This is an outpainting of the single attached picture of their actual painted sign on a warm cream stucco wall. It is the same continuous stucco wall at the same scale and brightness. No frames, photographs in frames, panels, outlines around the photo, borders, buttons, UI, or screenshots. Extend the physical wall substantially to the LEFT so its left 44% through the upper 83% is quiet blank warm ivory cream wall with a very subtle even stucco texture for actual HTML headings and a dark-green login form later. Put the attached painting in the RIGHT half with its unchanged logo art centered around x=73%, y=47%. Maintain the exact existing designed colored letters and house-shaped O with heart. Its ONLY text is the exact trademark painting from the reference: “GUARDERÍA INTEGRAL” arced above, “KIDS” and “HOUSE” on their respective lines, and “AFTER SCHOOL” arced below. Keep enough space around the complete text, sun rays and logo. Copy the source logo as closely as possible, with existing green, mustard, muted coral, warm blush, and the organic hand-painted contours. Reposition the sun just enough so that it is comfortably above and to the right of the region reserved for the login form. Let the lush overlapping broad rounded painted mustard, muted pink, sage and deep botanical green hills flow all the way across the bottom edge, including under the bottom left; keep the hills mostly within the lowest 13% in the left half, rising organically higher near the right where they are part of the original mural. One or two painted dark botanical sprigs, attached to the hills at the far left edge and in the lower right, with the exact simple rounded leaf silhouettes of the reference, add beautiful scale and character. Allow one subtle tiny painted sage cloud only above or toward the far right of the logo, as in the reference. Clear soft wall at the entire left-center, all other visual drama concentrated at right and bottom; clear wall reaches the top edge for header continuity. Cheerful, bright natural cream, sophisticated restraint, real tactile mineral plaster and matte painted pigments with authentic warm tones from the reference. Looks like walking up to the Kids House mural. No vignette, cast shadows, angle distortion, people, lawn, room, signage hardware, extra words or text, no watermark. Produce crisp high quality landscape art filling the canvas without margins.
+
+</details>
 
 <details>
 <summary>Ajuste de la luz y el color del mural</summary>
