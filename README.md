@@ -1,21 +1,16 @@
 # Kids House · Portal de familias
 
-Maqueta navegable del portal de cámaras. Incluye un mosaico de siete escenas de demostración, una vista individual y controles de reproducción. Los nombres y el orden de los canales son provisionales.
+Maqueta navegable del portal de familias. El ingreso simulado permite probar tres familias ficticias. Cada cuenta muestra el nombre de un niño o niña, su grupo y una jornada asignada. El visor incluye siete escenas de demostración, una vista individual y controles de reproducción.
 
 ## Ver en local
 
 Sirve la carpeta que contiene `index.html` con `python3 -m http.server 8804`. GitHub Pages publica esa misma carpeta tal como está.
 
+En la pantalla de ingreso, usa los botones de ejemplo para cargar una cuenta ficticia. El navegador guarda la sesión de prueba en la pestaña y la borra al cerrar sesión.
+
 ## Visuales
 
-ImageGen generó el mural y las escenas ficticias a partir de la identidad visual de Kids House. Los clips MP4 animan las escenas para probar el visor. Las fuentes Bricolage Grotesque y Nunito Sans se distribuyen con sus licencias en `assets/`.
-
-<details>
-<summary>Ilustración principal</summary>
-
-Use case: illustration-story. Asset type: wide hero illustration in a stylish Spanish-language daycare family camera portal. Design an original mural-style illustration evoking a small Chilean daycare's garden. Soft hand-painted matte gouache or fine paper grain, broad flat forms, sophisticated mid-century children's book print rather than a 3D render. On a light buttercream background place a large friendly sage/sea-green arched doorway or cottage with a little raspberry heart centered on its pale peach door, an apricot rounded roof and hints of terracotta. Frame the scene with asymmetrical hills, simple green leaves like the daycare's handpainted walls, a few small flowers, a pale cloud, and a warm ochre sun with short rays. Let the artwork fill the entire frame with a deliberate composition, especially the center and right. Restricted color palette warm ivory #fff6de, forest teal #1d5550, mint and sage greens, salmon, dusty raspberry, terracotta, muted golden ochre. Daylight and a warmly welcoming feeling. Landscape 3:2, suitable for cropping in a wide hero. No words, letters, interface, photo frame, people, security equipment, logos or watermark. No resemblance to any particular real site.
-
-</details>
+La portada usa un recorte de la fotografía proporcionada del mural de Kids House. ImageGen generó las escenas ficticias y los clips MP4 las animan para probar el visor. Las fuentes Bricolage Grotesque y Nunito Sans se distribuyen con sus licencias en `assets/`.
 
 <details>
 <summary>Escenas de demostración</summary>

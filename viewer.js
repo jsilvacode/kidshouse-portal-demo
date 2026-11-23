@@ -119,6 +119,11 @@ function showGrid(returnFocus) {
   if (returnFocus) gridButtons[selectedIndex].focus();
 }
 
+export function resetViewer() {
+  selectedIndex = 0;
+  showGrid(false);
+}
+
 player.addEventListener("error", () => {
   if (!loadedCamera) return;
   playerMessage.hidden = false;
