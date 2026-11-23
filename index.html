@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f9f7ee">
+  <meta name="robots" content="noindex">
+  <meta name="description" content="Maqueta del portal de familias de Kids House. Explora el mosaico y la vista individual de siete cámaras de demostración.">
+  <title>Kids House · Portal de familias</title>
+  <link rel="icon" href="assets/icon.png" type="image/png">
+  <link rel="stylesheet" href="styles.css">
+  <script src="viewer.js" defer></script>
+</head>
+<body id="inicio">
+  <a class="skip-link" href="#camaras">Ir a las cámaras</a>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="#inicio" aria-label="Kids House, inicio">
+        <span class="wordmark" aria-hidden="true">
+          <span class="wordmark-row wordmark-kids">
+            <span>K</span><span>I</span><span>D</span><span>S</span>
+          </span>
+          <span class="wordmark-row wordmark-house">
+            <span>H</span><span class="wordmark-home"><span>♥</span></span><span>U</span><span>S</span><span>E</span>
+          </span>
+        </span>
+        <span class="brand-caption">Guardería integral<br>After school</span>
+      </a>
+      <nav aria-label="Navegación principal">
+        <a class="nav-link" href="#camaras"><span class="icon icon-camera" aria-hidden="true"></span> Cámaras</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span aria-hidden="true" class="little-sun"></span> Portal de familias</p>
+        <h1 id="hero-title">Una ventana a<br><span>Kids House</span></h1>
+        <p class="hero-description">Explora las cámaras en el mosaico y amplía la que quieras ver con más detalle.</p>
+        <a class="button button-primary" href="#camaras"><span class="icon icon-grid" aria-hidden="true"></span> Ver el mosaico</a>
+      </div>
+      <div class="hero-illustration">
+        <img src="assets/mural.jpg" width="1200" height="800" alt="" fetchpriority="high">
+      </div>
+    </section>
+
+    <section class="viewer" id="camaras" aria-labelledby="viewer-title">
+      <div class="viewer-heading">
+        <div>
+          <h2 id="viewer-title">Cámaras</h2>
+          <p class="viewer-description">7 vistas con escenas de demostración</p>
+        </div>
+        <div class="view-controls" role="group" aria-label="Modo de visualización">
+          <button type="button" id="grid-mode" aria-controls="camera-grid" aria-pressed="true">
+            <span class="icon icon-grid" aria-hidden="true"></span> Mosaico
+          </button>
+          <button type="button" id="single-mode" aria-controls="single-view" aria-pressed="false">
+            <span class="icon icon-single" aria-hidden="true"></span> Vista individual
+          </button>
+        </div>
+      </div>
+      <ul class="camera-grid" id="camera-grid" aria-label="Siete cámaras de demostración"></ul>
+
+      <div class="single-view" id="single-view" hidden>
+        <article class="featured" aria-labelledby="featured-title">
+          <div class="featured-header">
+            <p id="featured-number" class="channel-number"></p>
+            <h3 id="featured-title" tabindex="-1"></h3>
+          </div>
+          <video id="camera-player" controls muted loop playsinline preload="metadata" aria-labelledby="featured-title"></video>
+          <p id="player-message" class="player-message" role="status" hidden></p>
+        </article>
+        <div class="camera-picker">
+          <h3>Elegir cámara</h3>
+          <ul id="camera-picker" aria-label="Todas las cámaras"></ul>
+        </div>
+      </div>
+
+      <noscript><p>Activa JavaScript para explorar las cámaras de la maqueta.</p></noscript>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="shell footer-inner">
+      <div>
+        <span class="footer-brand">Kids House</span>
+        <span class="footer-description">Guardería integral y after school</span>
+      </div>
+      <a href="#inicio">Volver al inicio</a>
+    </div>
+  </footer>
+</body>
+</html>
