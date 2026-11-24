@@ -1,4 +1,7 @@
-import { addRecord, addRecords, demoPasswordHash, getRecords, journeyHours, ownerUser } from "./records.js";
+import {
+  addRecord, addRecords, createTemporaryPassword, getParentByEmail, getRecords,
+  hashPassword, journeyHours, normalizeEmail, ownerEmail,
+} from "./records.js";
 
 const sectionButtons = document.querySelectorAll("[data-admin-section]");
 const panels = document.querySelectorAll("[data-admin-pane]");
@@ -14,6 +17,11 @@ const familyForm = document.querySelector("#new-parent");
 const familyAssignment = document.querySelector("#family-assignment");
 const newChildFields = document.querySelector("#new-child-fields");
 const newChildValue = "nuevo";
+const temporaryAccess = document.querySelector("#temporary-access");
+const temporaryEmail = document.querySelector("#temporary-email");
+const temporaryPassword = document.querySelector("#temporary-password");
+const copyFeedback = document.querySelector("#copy-feedback");
+let enrollmentAttempt = 0;
 
 function listItem(name, description) {
   const item = document.createElement("li");
@@ -66,7 +74,8 @@ export function renderAdmin() {
     const child = childById.get(parent.childId);
     const course = courseById.get(child?.courseId);
     const journey = journeyById.get(course?.journeyId);
-    return listItem(parent.name, [parent.user, child?.name, course?.name, journey?.name].filter(Boolean).join(" · "));
+    const status = parent.mustChangePassword ? "Por activar" : "";
+    return listItem(parent.name, [parent.email, child?.name, course?.name, journey?.name, status].filter(Boolean).join(" · "));
   }));
   fillChoices(courseJourney, "Elige una jornada", journeys.map((journey) =>
     new Option(journey.name + " · " + journeyHours(journey), journey.id)));
@@ -96,7 +105,7 @@ function created(form, kind, record, message) {
   followUp.hidden = false;
 }
 
-function openSection(name, focusTab = false) {
+export function openAdminSection(name, focusTab = false) {
   for (const control of sectionButtons) {
     const active = control.dataset.adminSection === name;
     control.setAttribute("aria-pressed", String(active));
@@ -105,23 +114,32 @@ function openSection(name, focusTab = false) {
   for (const panel of panels) panel.hidden = panel.dataset.adminPane !== name;
 }
 
+function clearTemporaryAccess() {
+  temporaryAccess.hidden = true;
+  temporaryEmail.textContent = "";
+  temporaryPassword.textContent = "";
+  copyFeedback.hidden = true;
+}
+
 export function resetAdmin() {
+  enrollmentAttempt += 1;
   for (const form of document.querySelectorAll("#admin-panel form")) {
     form.reset();
     for (const status of form.querySelectorAll(".admin-feedback, [data-next-input]")) status.hidden = true;
   }
   showAssignment();
-  openSection("parents");
+  clearTemporaryAccess();
+  openAdminSection("journeys");
 }
 
 export function bindAdmin(isOwner) {
   for (const button of sectionButtons) {
-    button.addEventListener("click", () => openSection(button.dataset.adminSection));
+    button.addEventListener("click", () => openAdminSection(button.dataset.adminSection));
   }
   for (const button of document.querySelectorAll("[data-admin-open]")) {
     button.addEventListener("click", () => {
       const { adminOpen, nextInput, record } = button.dataset;
-      openSection(adminOpen, true);
+      openAdminSection(adminOpen, true);
       if (!nextInput) return;
       const select = document.querySelector(nextInput);
       if (select === familyCourse) parentChild.value = newChildValue;
@@ -132,6 +150,16 @@ export function bindAdmin(isOwner) {
   }
   parentChild.addEventListener("change", showAssignment);
   familyCourse.addEventListener("change", showAssignment);
+  document.querySelector("#copy-temporary").addEventListener("click", async () => {
+    if (!isOwner() || temporaryAccess.hidden) return;
+    try {
+      await navigator.clipboard.writeText(`Correo ${temporaryEmail.textContent}\nClave temporal ${temporaryPassword.textContent}`);
+      copyFeedback.textContent = "Datos copiados.";
+    } catch {
+      copyFeedback.textContent = "Puedes seleccionar y copiar los datos de arriba.";
+    }
+    copyFeedback.hidden = false;
+  });
 
   document.querySelector("#new-journey").addEventListener("submit", (event) => {
     event.preventDefault();
@@ -183,10 +211,11 @@ export function bindAdmin(isOwner) {
     event.preventDefault();
     if (!isOwner()) return;
     const form = event.currentTarget;
+    const button = form.querySelector('button[type="submit"]');
+    if (button.disabled) return;
     const values = new FormData(form);
     const name = values.get("nombre").trim();
-    const user = values.get("usuario").trim().toLowerCase();
-    const password = values.get("clave");
+    const email = normalizeEmail(values.get("correo"));
     const { children, courses } = getRecords();
     const adding = values.get("nino") === newChildValue;
     const child = adding ? {
@@ -197,30 +226,35 @@ export function bindAdmin(isOwner) {
     if (!child?.name || !courses.some((course) => course.id === child.courseId)) {
       return feedback(form, "Completa la inscripción y elige un curso.", true);
     }
-    if (!name || !user || !password.trim()) {
-      return feedback(form, "Completa el nombre, el usuario y la clave del apoderado.", true);
+    if (!name || !email) {
+      return feedback(form, "Completa el nombre y el correo del apoderado.", true);
     }
-    if (user === ownerUser || getRecords().parents.some((parent) => parent.user === user)) {
-      return feedback(form, "Ese usuario ya está registrado.", true);
+    if (email === ownerEmail || getParentByEmail(email)) {
+      return feedback(form, "Ese correo ya tiene una cuenta.", true);
     }
-    const button = form.querySelector('button[type="submit"]');
+    clearTemporaryAccess();
     button.disabled = true;
+    const attempt = ++enrollmentAttempt;
     try {
       const id = crypto.randomUUID();
-      const passwordHash = await demoPasswordHash(id, password);
-      if (!isOwner()) return;
-      if (getRecords().parents.some((parent) => parent.user === user)) {
-        return feedback(form, "Ese usuario ya está registrado.", true);
+      const password = createTemporaryPassword();
+      const passwordHash = await hashPassword(password);
+      if (!isOwner() || attempt !== enrollmentAttempt) return;
+      if (getParentByEmail(email)) {
+        return feedback(form, "Ese correo ya tiene una cuenta.", true);
       }
-      const parent = { id, name, user, childId: child.id, passwordHash };
+      const parent = { id, name, email, childId: child.id, passwordHash, passwordVersion: 0, mustChangePassword: true };
       const entries = adding ? [["children", child], ["parents", parent]] : [["parents", parent]];
       const saved = addRecords(entries);
       form.reset();
       renderAdmin();
-      const message = `Acceso ${user} creado para la familia de ${child.name}.`;
+      const message = `Acceso creado para la familia de ${child.name}.`;
       feedback(form, saved ? message : message + " Disponible en esta pestaña.");
+      temporaryEmail.textContent = email;
+      temporaryPassword.textContent = password;
+      temporaryAccess.hidden = false;
     } catch {
-      feedback(form, "No se pudo completar el alta. Vuelve a intentar.", true);
+      if (attempt === enrollmentAttempt) feedback(form, "No se pudo completar el alta. Vuelve a intentar.", true);
     } finally {
       button.disabled = false;
     }

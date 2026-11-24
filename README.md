@@ -12,9 +12,11 @@ La página `en-vivo.html` admite un enlace privado firmado para abrir el visor r
 
 ## Administración de demostración
 
-La cuenta de la dueña abre la sección Familias. En el mismo formulario puedes inscribir a un niño o niña en un curso y crear el acceso de su apoderado, o elegir una inscripción existente. Las secciones Jornadas, Cursos y Niños conservan sus altas independientes. Al guardar un registro puedes continuar al siguiente paso con la selección ya cargada.
+La cuenta de la dueña abre un resumen con apoderados por jornada, accesos pendientes de activar y sesiones abiertas en el mismo navegador. Para probar el indicador de conexión, abre una familia de ejemplo en otra pestaña. La pestaña Cámaras abre las siete vistas de muestra. En Administración encontrarás, en orden, Jornadas, Cursos, Peques y Familias.
 
-Entra luego con la cuenta del apoderado para probar el acceso de lunes a viernes, en hora de Santiago. Usa datos ficticios. Las altas de esta maqueta se guardan en el navegador en que se crean.
+En Familias puedes inscribir a un niño o niña en un curso y crear el acceso de su apoderado, o elegir una inscripción existente. Ingresa un correo de prueba, por ejemplo `familia@kids-house.test`, y copia la clave temporal que genera el formulario. Al entrar con esos datos, el apoderado crea su propia contraseña antes de acceder al visor de lunes a viernes, en hora de Santiago. Al crear una jornada, un curso o un peque, puedes continuar al paso siguiente con la selección ya cargada.
+
+**Olvidé mi contraseña** abre la recuperación con un código que vence y solo sirve una vez. La maqueta simula el correo en su propia bandeja de prueba. Los registros se guardan en el navegador donde se crean. El envío de correo y las sesiones entre dispositivos requieren un servicio de autenticación para la versión real.
 
 ## Visuales
 

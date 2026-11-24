@@ -26,6 +26,11 @@
         </span>
         <span class="brand-caption">Guardería integral<br>After school</span>
       </a>
+      <nav class="owner-navigation" id="owner-navigation" aria-label="Portal de administración" hidden>
+        <button type="button" data-owner-page="home" aria-controls="owner-home" aria-pressed="true">Inicio</button>
+        <button type="button" data-owner-page="cameras" aria-controls="camaras" aria-pressed="false">Cámaras</button>
+        <button type="button" data-owner-page="admin" aria-controls="admin-panel" aria-pressed="false">Administración</button>
+      </nav>
       <button type="button" class="nav-link" id="sign-out" hidden>Cerrar sesión</button>
     </div>
   </header>
@@ -44,20 +49,22 @@
           <form class="entry-form" id="sign-in-form" method="post" autocomplete="off">
             <fieldset class="sign-in-fields" id="sign-in-fields" disabled>
               <label class="field" for="demo-user">
-                Usuario
-                <input id="demo-user" name="usuario" type="text" spellcheck="false" autocapitalize="none" required>
+                Correo electrónico
+                <input id="demo-user" name="correo" type="email" autocomplete="username" spellcheck="false" autocapitalize="none" required>
               </label>
               <div class="field">
                 <label for="demo-password">Contraseña</label>
                 <div class="password-field">
-                  <input id="demo-password" name="clave" type="password" required>
+                  <input id="demo-password" name="clave" type="password" autocomplete="current-password" required>
                   <button type="button" id="toggle-password" aria-controls="demo-password" aria-label="Mostrar contraseña">Ver</button>
                 </div>
               </div>
               <p class="form-error" id="sign-in-error" role="alert" hidden></p>
+              <p class="access-feedback" id="sign-in-feedback" role="status" hidden></p>
               <button type="submit" class="button button-primary">Ingresar</button>
             </fieldset>
           </form>
+          <button type="button" class="text-action forgotten-password" id="forgot-password">Olvidé mi contraseña</button>
           <div class="demo-access">
             <p id="demo-access-title">Explorar la maqueta</p>
             <div class="demo-options" role="group" aria-labelledby="demo-access-title">
@@ -69,8 +76,85 @@
           </div>
         </section>
 
+        <section class="hero-copy access-pane" id="request-recovery" aria-labelledby="recovery-title" hidden>
+          <h1 id="recovery-title" tabindex="-1">Recupera tu contraseña</h1>
+          <p class="hero-description">Usa el correo con el que ingresas a Kids House.</p>
+          <form class="entry-form access-form" id="recovery-form" method="post">
+            <label class="field" for="recovery-email">Correo electrónico
+              <input id="recovery-email" name="correo" type="email" autocomplete="email" required>
+            </label>
+            <button class="button button-primary" type="submit">Enviar código</button>
+          </form>
+          <button class="text-action forgotten-password" type="button" data-back-to-login>Volver al ingreso</button>
+        </section>
+
+        <section class="hero-copy access-pane" id="verify-recovery" aria-labelledby="verify-title" hidden>
+          <h1 id="verify-title" tabindex="-1">Revisa tu correo</h1>
+          <p class="hero-description">Si hay una cuenta asociada, recibirás un código de seis dígitos.</p>
+          <details class="demo-inbox" id="demo-inbox">
+            <summary>Abrir bandeja de prueba</summary>
+            <p id="demo-inbox-message"></p>
+            <p id="demo-inbox-code" hidden>Tu código es <strong></strong></p>
+          </details>
+          <form class="entry-form access-form" id="verify-form" method="post">
+            <label class="field" for="verify-code">Código de recuperación
+              <input id="verify-code" name="codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required>
+            </label>
+            <p class="form-error" id="verify-error" role="alert" hidden></p>
+            <button class="button button-primary" type="submit">Verificar código</button>
+          </form>
+          <div class="access-links">
+            <button class="text-action" type="button" id="resend-code">Generar otro código</button>
+            <button class="text-action" type="button" id="change-recovery-email">Usar otro correo</button>
+          </div>
+        </section>
+
+        <section class="hero-copy access-pane" id="password-setup" aria-labelledby="password-title" hidden>
+          <h1 id="password-title" tabindex="-1">Crea tu contraseña</h1>
+          <p class="hero-description" id="password-reason"></p>
+          <form class="entry-form access-form" id="password-form" method="post">
+            <label class="field" for="new-password">Nueva contraseña
+              <input id="new-password" name="clave" type="password" autocomplete="new-password" minlength="8" maxlength="128" aria-describedby="password-hint" required>
+            </label>
+            <p class="admin-hint" id="password-hint">Usa al menos 8 caracteres y elige una clave de prueba para esta maqueta.</p>
+            <label class="field" for="confirm-password">Repite la contraseña
+              <input id="confirm-password" name="confirmacion" type="password" autocomplete="new-password" maxlength="128" required>
+            </label>
+            <p class="form-error" id="password-error" role="alert" hidden></p>
+            <button class="button button-primary" type="submit">Guardar contraseña</button>
+          </form>
+          <button class="text-action forgotten-password" id="cancel-password-reset" type="button" data-back-to-login hidden>Volver al ingreso</button>
+        </section>
       </div>
     </div>
+
+    <section class="shell owner-home" id="owner-home" aria-labelledby="owner-title" hidden>
+      <header class="owner-overview">
+        <div>
+          <p class="owner-date" id="owner-date"></p>
+          <h1 id="owner-title" tabindex="-1">Resumen de Kids House</h1>
+        </div>
+        <button type="button" class="button button-primary" id="new-family-shortcut">Dar de alta a una familia <span aria-hidden="true">↗</span></button>
+      </header>
+      <dl class="owner-metrics" aria-label="Estadísticas del portal">
+        <div><dt>Apoderados</dt><dd id="total-parents">0</dd></div>
+        <div><dt>En línea</dt><dd id="total-online">0</dd></div>
+        <div><dt>Peques inscritos</dt><dd id="total-children">0</dd></div>
+        <div><dt>Accesos por activar</dt><dd id="total-pending">0</dd></div>
+      </dl>
+      <div class="owner-insights">
+        <section class="insight-card" aria-labelledby="distribution-title">
+          <h2 id="distribution-title">Apoderados por jornada</h2>
+          <ul class="journey-distribution" id="journey-distribution"></ul>
+        </section>
+        <section class="insight-card" aria-labelledby="online-title">
+          <h2 id="online-title">Apoderados conectados</h2>
+          <p class="insight-note">Sesiones de prueba abiertas en este navegador.</p>
+          <p class="online-empty" id="online-empty">Por ahora no hay apoderados conectados.</p>
+          <ul class="online-list" id="online-list"></ul>
+        </section>
+      </div>
+    </section>
 
     <section class="shell family-home" id="family-home" aria-labelledby="welcome-title" hidden>
       <div class="family-overview">
@@ -102,13 +186,13 @@
         <p class="admin-example">Maqueta con datos ficticios</p>
       </header>
       <div class="view-controls admin-controls" role="group" aria-label="Secciones de administración">
-        <button type="button" data-admin-section="parents" aria-controls="manage-parents" aria-pressed="true">Familias</button>
-        <button type="button" data-admin-section="journeys" aria-controls="manage-journeys" aria-pressed="false">Jornadas</button>
+        <button type="button" data-admin-section="journeys" aria-controls="manage-journeys" aria-pressed="true">Jornadas</button>
         <button type="button" data-admin-section="courses" aria-controls="manage-courses" aria-pressed="false">Cursos</button>
-        <button type="button" data-admin-section="children" aria-controls="manage-children" aria-pressed="false">Niños</button>
+        <button type="button" data-admin-section="children" aria-controls="manage-children" aria-pressed="false">Peques</button>
+        <button type="button" data-admin-section="parents" aria-controls="manage-parents" aria-pressed="false">Familias</button>
       </div>
 
-      <div class="admin-layout" id="manage-journeys" data-admin-pane="journeys" hidden>
+      <div class="admin-layout" id="manage-journeys" data-admin-pane="journeys">
         <form class="admin-card admin-form" id="new-journey" method="post" autocomplete="off">
           <h2>Nueva jornada</h2>
           <label class="field">Nombre <input type="text" name="nombre" required maxlength="70"></label>
@@ -159,7 +243,7 @@
         </section>
       </div>
 
-      <div class="admin-layout admin-families" id="manage-parents" data-admin-pane="parents">
+      <div class="admin-layout admin-families" id="manage-parents" data-admin-pane="parents" hidden>
         <form class="admin-card family-registration" id="new-parent" method="post" autocomplete="off">
           <h2>Dar de alta una familia</h2>
           <div class="registration-fields">
@@ -176,14 +260,26 @@
             <fieldset>
               <legend>Acceso del apoderado</legend>
               <label class="field">Nombre del apoderado <input type="text" name="nombre" required maxlength="70"></label>
-              <label class="field">Usuario <input type="text" name="usuario" required maxlength="64" autocapitalize="none" spellcheck="false"></label>
-              <label class="field">Clave de prueba <input type="password" name="clave" required maxlength="64"></label>
+              <label class="field">Correo electrónico <input type="email" name="correo" required maxlength="180" autocapitalize="none" spellcheck="false" aria-describedby="enrollment-hint"></label>
+              <p class="admin-hint" id="enrollment-hint">Será su usuario. Al guardar se genera una clave temporal.</p>
             </fieldset>
           </div>
           <div class="registration-actions">
             <button class="button button-primary" type="submit">Crear acceso</button>
             <p class="admin-feedback" role="status" hidden></p>
           </div>
+          <section class="temporary-access" id="temporary-access" aria-labelledby="temporary-title" hidden>
+            <div>
+              <h3 id="temporary-title">Acceso listo para entregar</h3>
+              <p>El apoderado creará su propia contraseña al ingresar.</p>
+              <dl>
+                <div><dt>Correo</dt><dd id="temporary-email"></dd></div>
+                <div><dt>Clave temporal</dt><dd><code id="temporary-password"></code></dd></div>
+              </dl>
+            </div>
+            <button class="nav-link" id="copy-temporary" type="button">Copiar datos</button>
+            <p class="admin-feedback" id="copy-feedback" role="status" hidden></p>
+          </section>
         </form>
         <section class="admin-card" aria-labelledby="registered-parents">
           <h2 id="registered-parents">Familias registradas</h2>
@@ -204,7 +300,7 @@
     <section class="shell viewer" id="camaras" aria-labelledby="viewer-title" hidden>
       <div class="viewer-heading">
         <div>
-          <h2 id="viewer-title">Cámaras</h2>
+          <h2 id="viewer-title" tabindex="-1">Cámaras</h2>
           <p class="viewer-description">7 vistas con escenas de demostración</p>
         </div>
         <div class="view-controls" role="group" aria-label="Modo de visualización">
