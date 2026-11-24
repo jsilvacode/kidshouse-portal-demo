@@ -8,6 +8,8 @@ Sirve la carpeta que contiene `index.html` con `python3 -m http.server 8804`. Gi
 
 En la pantalla de ingreso, usa los botones de ejemplo para cargar una cuenta ficticia. El navegador guarda la sesión de prueba en la pestaña y la borra al cerrar sesión.
 
+La página `en-vivo.html` admite un enlace privado firmado para abrir el visor real dentro de GitHub Pages. El visor pide una cuenta de prueba y verifica la sesión en el servidor para cada solicitud de video.
+
 ## Administración de demostración
 
 Con la cuenta de la dueña, crea una jornada, asígnala a un curso, registra a un niño o niña en ese curso y vincula a un apoderado. Entra luego con la cuenta de ese apoderado para comprobar que recibe la jornada del curso y el acceso de lunes a viernes, en hora de Santiago. Usa datos ficticios. Las altas de esta maqueta se guardan en el navegador en que se crean.
