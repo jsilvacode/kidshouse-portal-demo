@@ -1,28 +1,29 @@
-import { bindAdmin, renderAdmin } from "./admin.js";
+import { bindAdmin, renderAdmin, resetAdmin } from "./admin.js";
 import {
   demoPassword, demoPasswordHash, getFamily, getRecords, isJourneyOpen,
-  journeyHours, ownerUser, recordsKey, reloadRecords,
+  journeyAvailability, journeyHours, ownerUser, recordsKey, reloadRecords,
 } from "./records.js";
 import { resetViewer } from "./viewer.js";
 
 const storageKey = "kidshouse-demo-session";
 
 const entry = document.querySelector("#entry");
-const signIn = document.querySelector("#sign-in");
 const signInForm = document.querySelector("#sign-in-form");
 const userField = document.querySelector("#demo-user");
 const passwordField = document.querySelector("#demo-password");
+const passwordToggle = document.querySelector("#toggle-password");
+const signInSubmit = signInForm.querySelector('button[type="submit"]');
 const signInError = document.querySelector("#sign-in-error");
 const signOutButton = document.querySelector("#sign-out");
-const journeyView = document.querySelector("#choose-journey");
-const journeyForm = document.querySelector("#journey-form");
-const journeyInput = document.querySelector("#assigned-journey");
+const familyHome = document.querySelector("#family-home");
 const welcomeTitle = document.querySelector("#welcome-title");
 const welcomeChild = document.querySelector("#welcome-child");
+const welcomeCourse = document.querySelector("#welcome-course");
 const journeyName = document.querySelector("#journey-name");
-const journeyCourse = document.querySelector("#journey-course");
 const journeyTime = document.querySelector("#journey-hours");
-const journeyNotice = document.querySelector("#journey-notice");
+const accessCard = document.querySelector(".family-access");
+const accessState = document.querySelector("#access-state");
+const accessDetail = document.querySelector("#access-detail");
 const openCameras = document.querySelector("#open-cameras");
 const familySummary = document.querySelector("#family-summary");
 const familyTitle = document.querySelector("#family-title");
@@ -66,11 +67,17 @@ function currentFamily() {
   return session?.role === "parent" ? getFamily(session.account) : null;
 }
 
+function showPassword(visible) {
+  passwordField.type = visible ? "text" : "password";
+  passwordToggle.textContent = visible ? "Ocultar" : "Ver";
+  passwordToggle.setAttribute("aria-label", visible ? "Ocultar contraseña" : "Mostrar contraseña");
+}
+
 function showSession(moveFocus = false) {
   const family = currentFamily();
   const owner = session?.role === "owner";
-  const available = Boolean(family && isJourneyOpen(family.journey));
-  const showCameras = available && session.journey === family.journey.id;
+  const availability = family && journeyAvailability(family.journey);
+  const showCameras = Boolean(availability?.open && session.journey === family.journey.id);
   const interrupted = Boolean(session?.journey && !showCameras);
   if (interrupted) {
     session.journey = null;
@@ -78,10 +85,9 @@ function showSession(moveFocus = false) {
     saveSession();
   }
 
-  entry.hidden = owner || showCameras;
-  signIn.hidden = Boolean(family) || owner;
+  entry.hidden = owner || Boolean(family);
   signOutButton.hidden = !family && !owner;
-  journeyView.hidden = !family || showCameras;
+  familyHome.hidden = !family || showCameras;
   familySummary.hidden = !showCameras;
   cameras.hidden = !showCameras;
   adminPanel.hidden = !owner;
@@ -89,51 +95,49 @@ function showSession(moveFocus = false) {
   if (family) {
     const { child, course, journey } = family;
     welcomeChild.textContent = child.name;
+    welcomeCourse.textContent = "Curso " + course.name;
     journeyName.textContent = journey.name;
-    journeyCourse.textContent = "Curso " + course.name;
     journeyTime.textContent = journeyHours(journey);
-    journeyInput.value = journey.id;
-    journeyInput.checked = true;
-    journeyNotice.textContent = available
-      ? ""
-      : "Fuera de horario. Las cámaras se habilitan de lunes a viernes dentro de esta jornada.";
-    journeyNotice.hidden = available;
-    openCameras.disabled = !available;
+    accessCard.dataset.open = String(availability.open);
+    accessState.textContent = availability.open ? "Dentro de tu jornada." : "Fuera de horario.";
+    accessDetail.textContent = availability.detail;
+    openCameras.disabled = !availability.open;
     familyTitle.textContent = "Familia de " + child.name;
     familyInitial.textContent = child.name[0];
     familyDetails.textContent = [
       "Curso " + course.name, journey.name, journeyHours(journey),
     ].join(" · ");
-  } else {
-    journeyInput.value = "";
-    journeyInput.checked = false;
   }
 
   if (owner && moveFocus) renderAdmin();
   if (moveFocus || interrupted) {
     const heading = owner ? adminTitle : showCameras ? familyTitle : family ? welcomeTitle : loginTitle;
-    heading.focus();
+    window.scrollTo({ top: 0, behavior: "instant" });
+    heading.focus({ preventScroll: true });
   }
 }
 
 for (const button of document.querySelectorAll("[data-demo-family]")) {
   button.addEventListener("click", () => {
+    if (signInSubmit.disabled) return;
     const id = button.dataset.demoFamily;
     const account = id === "owner" ? ownerUser : getFamily(id)?.parent.user;
     if (!account) return;
     userField.value = account;
     passwordField.value = demoPassword;
     signInError.hidden = true;
-    signInForm.querySelector('button[type="submit"]').focus();
+    signInForm.requestSubmit(signInSubmit);
   });
 }
 
+passwordToggle.addEventListener("click", () => showPassword(passwordField.type === "password"));
+
 signInForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (signInSubmit.disabled) return;
   const user = userField.value.trim().toLowerCase();
   const password = passwordField.value;
-  const submit = signInForm.querySelector('button[type="submit"]');
-  submit.disabled = true;
+  signInSubmit.disabled = true;
   try {
     if (user === ownerUser && password === demoPassword) {
       session = { role: "owner", account: ownerUser };
@@ -144,13 +148,14 @@ signInForm.addEventListener("submit", async (event) => {
         ? await demoPasswordHash(parent.id, password) === parent.passwordHash
         : password === demoPassword);
       if (!valid) {
-        signInError.textContent = "Revisa los datos ingresados o carga una cuenta de ejemplo.";
+        signInError.textContent = "Revisa tu usuario y tu contraseña.";
         signInError.hidden = false;
         return;
       }
       session = { role: "parent", account: parent.id, journey: null };
     }
     signInForm.reset();
+    showPassword(false);
     signInError.hidden = true;
     saveSession();
     showSession(true);
@@ -158,15 +163,13 @@ signInForm.addEventListener("submit", async (event) => {
     signInError.textContent = "No se pudo iniciar la sesión de demostración. Vuelve a intentar.";
     signInError.hidden = false;
   } finally {
-    submit.disabled = false;
+    signInSubmit.disabled = false;
   }
 });
 
-journeyForm.addEventListener("submit", (event) => {
-  event.preventDefault();
+openCameras.addEventListener("click", () => {
   const family = currentFamily();
-  if (!family || !isJourneyOpen(family.journey)
-      || new FormData(journeyForm).get("jornada") !== family.journey.id) {
+  if (!family || !isJourneyOpen(family.journey)) {
     showSession();
     return;
   }
@@ -184,9 +187,11 @@ document.querySelector("#view-journey").addEventListener("click", () => {
 });
 
 signOutButton.addEventListener("click", () => {
+  if (session?.role === "owner") resetAdmin();
   session = null;
   resetViewer();
   signInForm.reset();
+  showPassword(false);
   signInError.hidden = true;
   saveSession();
   showSession(true);
@@ -201,7 +206,7 @@ window.addEventListener("storage", (event) => {
 });
 function refreshAccess() {
   const family = currentFamily();
-  if (family && openCameras.disabled !== !isJourneyOpen(family.journey)) {
+  if (family && accessDetail.textContent !== journeyAvailability(family.journey).detail) {
     showSession();
   }
 }

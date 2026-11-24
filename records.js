@@ -68,7 +68,12 @@ export function getRecords() {
 }
 
 export function addRecord(kind, record) {
-  const next = { ...records, [kind]: [...records[kind], record] };
+  return addRecords([[kind, record]]);
+}
+
+export function addRecords(entries) {
+  const next = { ...records };
+  for (const [kind, record] of entries) next[kind] = [...next[kind], record];
   records = next;
   try {
     localStorage.setItem(recordsKey, JSON.stringify(next));
@@ -90,11 +95,22 @@ export function journeyHours(journey) {
   return journey.start + " a " + journey.end;
 }
 
-export function isJourneyOpen(journey, now = new Date()) {
+export function journeyAvailability(journey, now = new Date()) {
   const time = Object.fromEntries(santiagoClock.formatToParts(now).map(({ type, value }) => [type, value]));
   const current = time.hour + ":" + time.minute;
-  return time.weekday !== "Sat" && time.weekday !== "Sun"
-    && current >= journey.start && current < journey.end;
+  const weekday = time.weekday !== "Sat" && time.weekday !== "Sun";
+  if (weekday && current >= journey.start && current < journey.end) {
+    return { open: true, detail: `Disponibles hasta las ${journey.end} de hoy.` };
+  }
+  if (weekday && current < journey.start) {
+    return { open: false, detail: `Vuelven a abrir hoy a las ${journey.start}.` };
+  }
+  const next = time.weekday === "Fri" || time.weekday === "Sat" ? "el lunes" : "mañana";
+  return { open: false, detail: `Vuelven a abrir ${next} a las ${journey.start}.` };
+}
+
+export function isJourneyOpen(journey, now = new Date()) {
+  return journeyAvailability(journey, now).open;
 }
 
 export async function demoPasswordHash(id, password) {

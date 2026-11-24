@@ -47,16 +47,19 @@
                 Usuario
                 <input id="demo-user" name="usuario" type="text" spellcheck="false" autocapitalize="none" required>
               </label>
-              <label class="field" for="demo-password">
-                Clave
-                <input id="demo-password" name="clave" type="password" required>
-              </label>
+              <div class="field">
+                <label for="demo-password">Contraseña</label>
+                <div class="password-field">
+                  <input id="demo-password" name="clave" type="password" required>
+                  <button type="button" id="toggle-password" aria-controls="demo-password" aria-label="Mostrar contraseña">Ver</button>
+                </div>
+              </div>
               <p class="form-error" id="sign-in-error" role="alert" hidden></p>
               <button type="submit" class="button button-primary">Ingresar</button>
             </fieldset>
           </form>
           <div class="demo-access">
-            <p id="demo-access-title">Probar con una cuenta de ejemplo</p>
+            <p id="demo-access-title">Explorar la maqueta</p>
             <div class="demo-options" role="group" aria-labelledby="demo-access-title">
               <button type="button" data-demo-family="morning">Mañana</button>
               <button type="button" data-demo-family="afternoon">Tarde</button>
@@ -66,45 +69,46 @@
           </div>
         </section>
 
-        <section class="hero-copy" id="choose-journey" aria-labelledby="welcome-title" hidden>
-          <p class="eyebrow"><span aria-hidden="true" class="little-sun"></span> Portal de familias</p>
-          <h1 class="welcome-title" id="welcome-title" tabindex="-1">Hola, familia de <span id="welcome-child"></span></h1>
-          <p class="hero-description">Confirma la jornada asignada para abrir el visor de cámaras.</p>
-          <form class="entry-form" id="journey-form" method="post">
-            <fieldset class="journey-fieldset">
-              <legend>Tu jornada disponible</legend>
-              <label class="journey-option">
-                <input id="assigned-journey" type="radio" name="jornada" required>
-                <span>
-                  <span class="journey-name" id="journey-name"></span>
-                  <span class="journey-course" id="journey-course"></span>
-                  <span class="journey-hours" id="journey-hours"></span>
-                  <span class="journey-hours">Lunes a viernes · Hora de Santiago</span>
-                </span>
-              </label>
-            </fieldset>
-            <p class="journey-notice" id="journey-notice" role="status" hidden></p>
-            <button type="submit" class="button button-primary" id="open-cameras"><span class="icon icon-camera" aria-hidden="true"></span> Ver mis cámaras</button>
-          </form>
-        </section>
       </div>
     </div>
 
+    <section class="shell family-home" id="family-home" aria-labelledby="welcome-title" hidden>
+      <div class="family-overview">
+        <header class="family-welcome">
+          <h1 id="welcome-title" tabindex="-1">Hola, familia de <span id="welcome-child"></span></h1>
+          <p id="welcome-course"></p>
+        </header>
+        <section class="family-journey" aria-labelledby="journey-name">
+          <p class="journey-label">Tu jornada</p>
+          <h2 id="journey-name"></h2>
+          <p class="journey-time" id="journey-hours"></p>
+          <p class="journey-days">Lunes a viernes · Hora de Santiago</p>
+        </section>
+      </div>
+      <section class="family-access" aria-labelledby="access-title">
+        <span class="family-access-icon" aria-hidden="true"><span class="icon icon-camera"></span></span>
+        <div class="family-access-copy">
+          <h2 id="access-title">Cámaras</h2>
+          <p role="status"><span id="access-state"></span> <span id="access-detail"></span></p>
+        </div>
+        <button type="button" class="button button-primary" id="open-cameras">Ver cámaras <span aria-hidden="true">↗</span></button>
+      </section>
+    </section>
+
     <section class="shell admin" id="admin-panel" aria-labelledby="admin-title" hidden>
       <header class="admin-heading">
-        <p class="eyebrow"><span aria-hidden="true" class="little-sun"></span> Administración</p>
-        <h1 id="admin-title" tabindex="-1">Familias y cursos</h1>
-        <p>Asigna una jornada a cada curso. Las familias reciben el horario del curso de su hijo o hija.</p>
-        <p class="admin-example">Usa datos ficticios en esta maqueta.</p>
+        <h1 id="admin-title" tabindex="-1">Administración</h1>
+        <p>Gestiona las inscripciones y el acceso de las familias.</p>
+        <p class="admin-example">Maqueta con datos ficticios</p>
       </header>
-      <div class="view-controls admin-controls" role="group" aria-label="Administración de familias">
-        <button type="button" data-admin-section="journeys" aria-controls="manage-journeys" aria-pressed="true">Jornadas</button>
+      <div class="view-controls admin-controls" role="group" aria-label="Secciones de administración">
+        <button type="button" data-admin-section="parents" aria-controls="manage-parents" aria-pressed="true">Familias</button>
+        <button type="button" data-admin-section="journeys" aria-controls="manage-journeys" aria-pressed="false">Jornadas</button>
         <button type="button" data-admin-section="courses" aria-controls="manage-courses" aria-pressed="false">Cursos</button>
         <button type="button" data-admin-section="children" aria-controls="manage-children" aria-pressed="false">Niños</button>
-        <button type="button" data-admin-section="parents" aria-controls="manage-parents" aria-pressed="false">Apoderados</button>
       </div>
 
-      <div class="admin-layout" id="manage-journeys" data-admin-pane="journeys">
+      <div class="admin-layout" id="manage-journeys" data-admin-pane="journeys" hidden>
         <form class="admin-card admin-form" id="new-journey" method="post" autocomplete="off">
           <h2>Nueva jornada</h2>
           <label class="field">Nombre <input type="text" name="nombre" required maxlength="70"></label>
@@ -115,6 +119,7 @@
           <p class="admin-hint">Lunes a viernes · Hora de Santiago</p>
           <button class="button button-primary" type="submit">Crear jornada</button>
           <p class="admin-feedback" role="status" hidden></p>
+          <button class="text-action" type="button" data-next-input="#course-journey" data-admin-open="courses" hidden>Crear un curso con esta jornada →</button>
         </form>
         <section class="admin-card" aria-labelledby="registered-journeys">
           <h2 id="registered-journeys">Jornadas registradas</h2>
@@ -127,8 +132,10 @@
           <h2>Nuevo curso</h2>
           <label class="field">Nombre del curso <input type="text" name="nombre" required maxlength="70"></label>
           <label class="field">Jornada <select name="jornada" id="course-journey" required></select></label>
+          <button type="button" class="text-action" data-admin-open="journeys">Crear una jornada</button>
           <button class="button button-primary" type="submit">Crear curso</button>
           <p class="admin-feedback" role="status" hidden></p>
+          <button class="text-action" type="button" data-next-input="#family-course" data-admin-open="parents" hidden>Inscribir una familia en este curso →</button>
         </form>
         <section class="admin-card" aria-labelledby="registered-courses">
           <h2 id="registered-courses">Cursos registrados</h2>
@@ -144,6 +151,7 @@
           <p class="admin-hint" id="course-hint">La jornada se toma del curso.</p>
           <button class="button button-primary" type="submit">Registrar niño o niña</button>
           <p class="admin-feedback" role="status" hidden></p>
+          <button class="text-action" type="button" data-next-input="#parent-child" data-admin-open="parents" hidden>Vincular a su apoderado →</button>
         </form>
         <section class="admin-card" aria-labelledby="registered-children">
           <h2 id="registered-children">Niños y niñas registrados</h2>
@@ -151,18 +159,34 @@
         </section>
       </div>
 
-      <div class="admin-layout" id="manage-parents" data-admin-pane="parents" hidden>
-        <form class="admin-card admin-form" id="new-parent" method="post" autocomplete="off">
-          <h2>Registrar padre o apoderado</h2>
-          <label class="field">Nombre <input type="text" name="nombre" required maxlength="70"></label>
-          <label class="field">Usuario <input type="text" name="usuario" required maxlength="64" autocapitalize="none" spellcheck="false"></label>
-          <label class="field">Clave de prueba <input type="password" name="clave" required maxlength="64"></label>
-          <label class="field">Niño o niña <select name="nino" id="parent-child" required></select></label>
-          <button class="button button-primary" type="submit">Dar de alta</button>
-          <p class="admin-feedback" role="status" hidden></p>
+      <div class="admin-layout admin-families" id="manage-parents" data-admin-pane="parents">
+        <form class="admin-card family-registration" id="new-parent" method="post" autocomplete="off">
+          <h2>Dar de alta una familia</h2>
+          <div class="registration-fields">
+            <fieldset>
+              <legend>Niño o niña</legend>
+              <label class="field">Inscripción <select name="nino" id="parent-child" required></select></label>
+              <div class="new-child-fields" id="new-child-fields">
+                <label class="field">Nombre del niño o niña <input type="text" name="nino_nombre" required maxlength="70"></label>
+                <label class="field">Curso <select name="nino_curso" id="family-course" required></select></label>
+                <button type="button" class="text-action" data-admin-open="courses">Crear un curso</button>
+              </div>
+              <p class="assignment-preview" id="family-assignment" aria-live="polite" hidden></p>
+            </fieldset>
+            <fieldset>
+              <legend>Acceso del apoderado</legend>
+              <label class="field">Nombre del apoderado <input type="text" name="nombre" required maxlength="70"></label>
+              <label class="field">Usuario <input type="text" name="usuario" required maxlength="64" autocapitalize="none" spellcheck="false"></label>
+              <label class="field">Clave de prueba <input type="password" name="clave" required maxlength="64"></label>
+            </fieldset>
+          </div>
+          <div class="registration-actions">
+            <button class="button button-primary" type="submit">Crear acceso</button>
+            <p class="admin-feedback" role="status" hidden></p>
+          </div>
         </form>
         <section class="admin-card" aria-labelledby="registered-parents">
-          <h2 id="registered-parents">Padres y apoderados registrados</h2>
+          <h2 id="registered-parents">Familias registradas</h2>
           <ul id="parent-records" class="admin-records"></ul>
         </section>
       </div>
